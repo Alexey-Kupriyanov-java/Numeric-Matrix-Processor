@@ -4,34 +4,47 @@ import java.util.Scanner;
 
 public class Main {
     public static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        int n1 = scanner.nextInt();
-        int m1 = scanner.nextInt();
-        int[][] a = fillMatrix(n1, m1);
+        int[][] a = input();
+        int constant = scanner.nextInt();
 
-        int n2 = scanner.nextInt();
-        int m2 = scanner.nextInt();
-        int[][] b = fillMatrix(n2, m2);
+        print(multipleByConstant(a, constant));
 
-        if(n1 != n2 || m1 != m2) {
-            System.out.println("ERROR");
-        } else {
-            printMatrix(additional(a, b));
-        }
+//        int[][] b = input();
+//
+//        if(a.length != b.length || a[0].length != b[0].length) {
+//            System.out.println("ERROR");
+//        } else {
+//            print(additional(a, b));
     }
 
-    public static int[][] additional(int[][] a, int[][] b) {
-        int[][] matrix = new int[a.length][a[0].length];
-
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                matrix[i][j] = a[i][j] + b[i][j];
+    private static int[][] multipleByConstant(int[][] matrix, int constant) {
+        int[][] result = matrix.clone();
+        for (int i = 0; i < result.length; i++) {
+            for (int j = 0; j < result[i].length; j++) {
+                result[i][j] = result[i][j] * constant;
             }
         }
-        return matrix;
+
+        return result;
     }
 
-    public static int[][] fillMatrix(int n, int m) {
+    private static int[][] additional(int[][] a, int[][] b) {
+        int[][] result = new int[a.length][a[0].length];
+
+        for (int i = 0; i < result.length; i++) {
+            for (int j = 0; j < result[i].length; j++) {
+                result[i][j] = a[i][j] + b[i][j];
+            }
+        }
+
+        return result;
+    }
+
+    private static int[][] input() {
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
         int[][] matrix = new int[n][m];
 
         for (int i = 0; i < n; i++) {
@@ -39,10 +52,11 @@ public class Main {
                 matrix[i][j] = scanner.nextInt();
             }
         }
+
         return matrix;
     }
 
-    public static void printMatrix(int[][] matrix) {
+    private static void print(int[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 System.out.print(matrix[i][j] + " ");
