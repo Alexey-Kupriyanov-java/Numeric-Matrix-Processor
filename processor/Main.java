@@ -9,7 +9,7 @@ public class Main {
 
         while (true) {
             int answer = showMainMenu();
-            double[][] result = null;
+            double[][] result;
 
             if (answer == 0) {
                 break;
@@ -20,31 +20,42 @@ public class Main {
                     double[][] a = input(" first ");
                     double[][] b = input(" second ");
                     result = additional(a, b);
+                    printResult(result);
                     break;
                 case 2:
                     a = input(" ");
                     System.out.print("Enter constant: ");
                     double constant = scanner.nextDouble();
                     result = multipleByConstant(a, constant);
+                    printResult(result);
                     break;
                 case 3:
                     a = input(" first ");
                     b = input(" second ");
                     result = multiple(a, b);
+                    printResult(result);
                     break;
                 case 4:
                     answer = showTransposeMenu();
                     a = input(" ");
                     result = transpose(a, answer);
+                    printResult(result);
+                    break;
+                case 5:
+                    a = input(" ");
+                    System.out.println(determinateOf(a));
                     break;
             }
-            if (result == null) {
-                System.out.println("The operation cannot be performed.");
-            } else {
-                System.out.println("The result is:");
-                print(result);
-                System.out.println();
-            }
+        }
+    }
+
+    private static void printResult(double[][] result) {
+        if (result == null) {
+            System.out.println("The operation cannot be performed.");
+        } else {
+            System.out.println("The result is:");
+            print(result);
+            System.out.println();
         }
     }
 
@@ -53,6 +64,7 @@ public class Main {
         System.out.println("2. Multiply matrix by a constant");
         System.out.println("3. Multiply matrices");
         System.out.println("4. Transpose matrix");
+        System.out.println("5. Calculate a determinant");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
         return scanner.nextInt();
@@ -168,6 +180,28 @@ public class Main {
         }
 
         return result;
+    }
+
+    private static double determinateOf(double[][] a) {
+        double determinate = 0;
+
+        if (a.length == 2) {
+            return a[0][0] * a[1][1] - a[0][1] * a[1][0];
+        }
+        for (int k = 0; k < a.length; k++) {
+            double[][] minor = new double[a.length - 1][a.length - 1];
+            for (int i = 0; i < minor.length; i++) {
+                for (int j = 0; j < minor.length; j++) {
+                    if (j >= k) {
+                        minor[i][j] = a[i + 1][j + 1];
+                    } else {
+                        minor[i][j] = a[i + 1][j];
+                    }
+                }
+            }
+            determinate += Math.pow(-1, k + 2) * a[0][k] * determinateOf(minor);
+        }
+        return determinate;
     }
 
     private static void print(double[][] matrix) {
