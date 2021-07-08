@@ -8,8 +8,7 @@ public class Main {
     public static void main(String[] args) {
 
         while (true) {
-            printMenu();
-            int answer = scanner.nextInt();
+            int answer = showMainMenu();
             double[][] result = null;
 
             if (answer == 0) {
@@ -33,6 +32,11 @@ public class Main {
                     b = input(" second ");
                     result = multiple(a, b);
                     break;
+                case 4:
+                    answer = showTransposeMenu();
+                    a = input(" ");
+                    result = transpose(a, answer);
+                    break;
             }
             if (result == null) {
                 System.out.println("The operation cannot be performed.");
@@ -44,12 +48,23 @@ public class Main {
         }
     }
 
-    private static void printMenu() {
+    private static int showMainMenu() {
         System.out.println("1. Add matrices");
         System.out.println("2. Multiply matrix by a constant");
         System.out.println("3. Multiply matrices");
+        System.out.println("4. Transpose matrix");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
+        return scanner.nextInt();
+    }
+
+    private static int showTransposeMenu() {
+        System.out.println("1. Main diagonal");
+        System.out.println("2. Side diagonal");
+        System.out.println("3. Vertical line");
+        System.out.println("4. Horizontal line");
+        System.out.print("Your choice: ");
+        return scanner.nextInt();
     }
 
     private static double[][] input(String str) {
@@ -113,6 +128,43 @@ public class Main {
                     result[i][j] += a[i][k] * b[k][j];
                 }
             }
+        }
+
+        return result;
+    }
+
+    private static double[][] transpose(double[][] a, int answer) {
+        double[][] result = new double[a.length][a[0].length];
+
+        switch (answer) {
+            case 1:
+                for (int i = 0; i < result.length; i++) {
+                    for (int j = 0; j < result[0].length; j++) {
+                        result[i][j] = a[j][i];
+                    }
+                }
+                break;
+            case 2:
+                for (int i = 0; i < result.length; i++) {
+                    for (int j = 0; j < result[0].length; j++) {
+                        result[i][j] = a[result.length - 1 - j][result.length - 1 - i];
+                    }
+                }
+                break;
+            case 3:
+                for (int i = 0; i < result.length; i++) {
+                    for (int j = 0; j < result[0].length; j++) {
+                        result[i][j] = a[i][result.length - 1 - j];
+                    }
+                }
+                break;
+            case 4:
+                for (int i = 0; i < result.length; i++) {
+                    for (int j = 0; j < result[0].length; j++) {
+                        result[i][j] = a[result.length - 1 - i][j];
+                    }
+                }
+                break;
         }
 
         return result;
