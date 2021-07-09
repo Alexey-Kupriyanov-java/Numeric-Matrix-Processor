@@ -1,5 +1,6 @@
 package processor;
 
+import java.text.DecimalFormat;
 import java.util.Scanner;
 
 public class Main {
@@ -20,38 +21,44 @@ public class Main {
                     double[][] a = input(" first ");
                     double[][] b = input(" second ");
                     result = additional(a, b);
-                    printResult(result);
+                    printResult(result, "The operation cannot be performed.");
                     break;
                 case 2:
                     a = input(" ");
                     System.out.print("Enter constant: ");
                     double constant = scanner.nextDouble();
                     result = multipleByConstant(a, constant);
-                    printResult(result);
+                    printResult(result, "The operation cannot be performed.");
                     break;
                 case 3:
                     a = input(" first ");
                     b = input(" second ");
                     result = multiple(a, b);
-                    printResult(result);
+                    printResult(result, "The operation cannot be performed.");
                     break;
                 case 4:
                     answer = showTransposeMenu();
                     a = input(" ");
                     result = transpose(a, answer);
-                    printResult(result);
+                    printResult(result, "The operation cannot be performed.");
                     break;
                 case 5:
                     a = input(" ");
-                    System.out.println(determinateOf(a));
+                    System.out.println(determinantOf(a));
+                    break;
+                case 6:
+                    a = input(" ");
+                    result = inverse(a);
+
+                    printResult(result, "This matrix doesn't have an inverse.");
                     break;
             }
         }
     }
 
-    private static void printResult(double[][] result) {
+    private static void printResult(double[][] result, String errMessage) {
         if (result == null) {
-            System.out.println("The operation cannot be performed.");
+            System.out.println(errMessage);
         } else {
             System.out.println("The result is:");
             print(result);
@@ -65,6 +72,7 @@ public class Main {
         System.out.println("3. Multiply matrices");
         System.out.println("4. Transpose matrix");
         System.out.println("5. Calculate a determinant");
+        System.out.println("6. Inverse matrix");
         System.out.println("0. Exit");
         System.out.print("Your choice: ");
         return scanner.nextInt();
@@ -145,10 +153,10 @@ public class Main {
         return result;
     }
 
-    private static double[][] transpose(double[][] a, int answer) {
+    private static double[][] transpose(double[][] a, int method) {
         double[][] result = new double[a.length][a[0].length];
 
-        switch (answer) {
+        switch (method) {
             case 1:
                 for (int i = 0; i < result.length; i++) {
                     for (int j = 0; j < result[0].length; j++) {
@@ -182,32 +190,57 @@ public class Main {
         return result;
     }
 
-    private static double determinateOf(double[][] a) {
+    private static double determinantOf(double[][] matrix) {
         double determinate = 0;
 
-        if (a.length == 2) {
-            return a[0][0] * a[1][1] - a[0][1] * a[1][0];
+        if (matrix.length == 2) {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         }
-        for (int k = 0; k < a.length; k++) {
-            double[][] minor = new double[a.length - 1][a.length - 1];
-            for (int i = 0; i < minor.length; i++) {
-                for (int j = 0; j < minor.length; j++) {
-                    if (j >= k) {
-                        minor[i][j] = a[i + 1][j + 1];
-                    } else {
-                        minor[i][j] = a[i + 1][j];
-                    }
-                }
-            }
-            determinate += Math.pow(-1, k + 2) * a[0][k] * determinateOf(minor);
+        for (int k = 0; k < matrix.length; k++) {
+            determinate += matrix[0][k] * cofactorOf(matrix, 0, k);
         }
         return determinate;
+    }
+
+    private static double cofactorOf(double[][] matrix, int row, int col) {
+        double[][] minor = new double[matrix.length - 1][matrix.length - 1];
+        for (int i = 0; i < minor.length; i++) {
+            for (int j = 0; j < minor.length; j++) {
+                int k = i;
+                int l = j;
+                if (i >= row) {
+                    k++;
+                }
+                if (j >= col) {
+                    l++;
+                }
+                minor[i][j] = matrix[k][l];
+            }
+        }
+        return Math.pow(-1, row + col + 2) * determinantOf(minor);
+    }
+
+    private static double[][] inverse(double[][] matrix) {
+        double[][] result;
+        double determinant;
+        double[][] cofactors = new double[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                cofactors[i][j] = cofactorOf(matrix, i, j);
+            }
+        }
+
+        determinant = determinantOf(matrix);
+        result = determinant == 0 ? null :multipleByConstant(transpose(cofactors, 1), 1 / determinant);
+
+        return result;
     }
 
     private static void print(double[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
+                System.out.printf("%.2f ", matrix[i][j]);
             }
             System.out.println();
         }
